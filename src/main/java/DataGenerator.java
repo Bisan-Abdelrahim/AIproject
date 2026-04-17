@@ -14,7 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class DataGenerator {
 
     private static final String FILE_PATH =
-            "C:\\Users\\hp\\OneDrive\\Desktop\\AI\\Coding-project\\Data.xlsx";
+    		 "C:\\Users\\Hp\\Downloads\\Data.xlsx";
 
     public static List<Plant> loadFromExcel() {
         List<Plant> plants = new ArrayList<>();
