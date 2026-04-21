@@ -42,6 +42,9 @@ import functional.DataGenerator;
 import functional.Perceptron;
 import functional.Plant;
 import functional.SA;
+import java.io.File;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class GardenGUI extends JFrame {
 
@@ -207,7 +210,7 @@ public class GardenGUI extends JFrame {
         split.setPreferredSize(new Dimension(1240, 560));
 
         // Load initial data from project Excel file as soon as UI starts.
-        loadData();
+        refreshTable();
 
         setVisible(true);
     }
@@ -894,7 +897,21 @@ public class GardenGUI extends JFrame {
     }
 
     private void loadData() {
-        trainingDataPlants = DataGenerator.loadFromExcel();
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Select Excel File");
+
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Excel Files (*.xlsx)", "xlsx");
+        fileChooser.setFileFilter(filter);
+
+        int result = fileChooser.showOpenDialog(this);
+
+        if (result != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+
+        File selectedFile = fileChooser.getSelectedFile();
+        trainingDataPlants = DataGenerator.loadFromExcel(selectedFile.toPath());
+
         plantsCardValue.setText(String.valueOf(trainingDataPlants.size()));
 
         latestTrainingSet = DataGenerator.getTrainingSet(trainingDataPlants);
@@ -909,11 +926,12 @@ public class GardenGUI extends JFrame {
         modelStatusLabel.setForeground(ORANGE);
         updateTrainingDatasetInfo();
         resetTrainingStatusAndResults();
-        
+
         gardenPlants.clear();
         refreshTable();
-        
+
         outputArea.setText("Training data loaded.\n");
+        outputArea.append("Selected file: " + selectedFile.getName() + "\n");
         outputArea.append("Training plants: " + trainingDataPlants.size() + "\n");
         outputArea.append("Garden plants: 0\n");
         outputArea.append("Model status: NOT TRAINED\n\n");
@@ -922,7 +940,7 @@ public class GardenGUI extends JFrame {
         if (saStatusValue != null) {
             saStatusValue.setText("Waiting for prediction");
         }
-        
+
         DataGenerator.printModelStatus();
     }
 
